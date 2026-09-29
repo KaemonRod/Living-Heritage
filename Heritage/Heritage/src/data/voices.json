@@ -1,0 +1,56 @@
+[
+  {
+    "id": "voice-old-goa-restoration",
+    "speakerName": "Dr. Maria Aurora Couto",
+    "role": "Senior Heritage Curator & Author",
+    "location": "Aldona & Old Goa",
+    "title": "Memories of Old Goa before Tourism",
+    "story": "In my childhood, Old Goa was quiet and reverent. People would journey by canoe across the Mandovi river to attend the Feast of St. Francis Xavier. The unplastered stones of Bom Jesus held stories of generations who prayed within those quiet walls.",
+    "audioTranscript": "In the 1940s and 50s, we traveled from Aldona to Old Goa in wooden ferry boats called batims. The bells of Se Cathedral resonated across the tranquil river basin, reaching villages miles away.",
+    "date": "Archival Record 2021",
+    "image": {
+      "url": "https://s7ap1.scene7.com/is/image/incredibleindia/basilica-of-bom-jesus-goa-2-musthead-hero?qlt=82&ts=1742156651015",
+      "caption": "Old Goa Basilicas during morning quietude",
+      "author": "Praveen P",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://s7ap1.scene7.com/is/image/incredibleindia/basilica-of-bom-jesus-goa-2-musthead-hero?qlt=82&ts=1742156651015",
+      "isVerified": true
+    }
+  },
+  {
+    "id": "voice-fontainhas-villas",
+    "speakerName": "Uncle Antonio Fernandes",
+    "role": "Third-Generation Fontainhas Resident",
+    "location": "Bairro das Fontainhas, Panaji",
+    "title": "Why We Paint Our Homes Every Year",
+    "story": "Under municipal tradition, we repaint our outer walls right after the monsoon. The indigo blue and terracotta red minerals protected our laterite walls from salty estuary air. The carepas oyster windows kept our rooms cool without any electric fans.",
+    "audioTranscript": "If you look closely at our window panes, you'll see flat polished shells instead of glass. They soft-filter the harsh tropical sunlight into a gentle pearlescent glow throughout our living rooms.",
+    "date": "Oral Interview 2023",
+    "image": {
+      "url": "https://www.tourmyindia.com/states/goa/image/fontainhas-latin-quarter-goa.webp",
+      "caption": "Colonial street scene in Fontainhas, Panaji",
+      "author": "Frederick Noronha",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://www.tourmyindia.com/states/goa/image/fontainhas-latin-quarter-goa.webp",
+      "isVerified": true
+    }
+  },
+  {
+    "id": "voice-tambdi-surla-jungle",
+    "speakerName": "Prakash Gaonkar",
+    "role": "Forest Elder & Local Historian",
+    "location": "Tambdi Surla, Dharbandora",
+    "title": "How the Forest Protected the 12th-Century Temple",
+    "story": "Our ancestors knew that the dense Western Ghats canopy kept Mahadev Temple hidden from invading armies. For centuries, village families quietly maintained the stone step tank and offered wild jasmine flowers at the sanctum linga.",
+    "audioTranscript": "No mortar was used to construct this basalt temple; every block interlocks with stone tongue-and-groove joints. When heavy monsoon downpours arrive, the stone drainage channels inside the courtyard drain water smoothly into the Surla river.",
+    "date": "Oral Interview 2022",
+    "image": {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/7/78/Shri_Mahadev_Temple%2C_Tambdi_Surla%2C_Goa.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=original",
+      "caption": "Tambdi Surla stone temple surrounded by Western Ghats jungle",
+      "author": "Abhishek Gaurav",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/7/78/Shri_Mahadev_Temple%2C_Tambdi_Surla%2C_Goa.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=original",
+      "isVerified": true
+    }
+  }
+]

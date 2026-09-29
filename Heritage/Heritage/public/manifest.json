@@ -1,0 +1,16 @@
+{
+  "short_name": "Living Heritage",
+  "name": "Living Heritage - Goa Heritage Discovery",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#FAF6F0",
+  "theme_color": "#c85a32",
+  "display": "standalone",
+  "orientation": "portrait"
+}

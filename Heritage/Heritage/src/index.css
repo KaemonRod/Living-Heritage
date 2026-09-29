@@ -1,0 +1,155 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap');
+@import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+
+@theme {
+  --font-serif: 'Cinzel', serif;
+  --font-display: 'Playfair Display', serif;
+  --font-sans: 'Plus Jakarta Sans', sans-serif;
+
+  --color-terracotta-50: #fbf4f0;
+  --color-terracotta-100: #f6e6dc;
+  --color-terracotta-200: #eccab8;
+  --color-terracotta-300: #dea28a;
+  --color-terracotta-400: #cf775b;
+  --color-terracotta-500: #c85a32;
+  --color-terracotta-600: #b54526;
+  --color-terracotta-700: #96351f;
+  --color-terracotta-800: #7b2d1f;
+  --color-terracotta-900: #64281d;
+
+  --color-azulejo-50: #f0f7fc;
+  --color-azulejo-100: #e0eef7;
+  --color-azulejo-200: #b9ddf0;
+  --color-azulejo-300: #7cc2e4;
+  --color-azulejo-400: #38a3d4;
+  --color-azulejo-500: #1a5b8c;
+  --color-azulejo-600: #144974;
+  --color-azulejo-700: #123c60;
+  --color-azulejo-800: #13334f;
+  --color-azulejo-900: #142c43;
+
+  --color-laterite-500: #7a2e1e;
+  --color-laterite-600: #632215;
+
+  --color-parchment-50: #fdfbf7;
+  --color-parchment-100: #faf6f0;
+  --color-parchment-200: #f3ebdE;
+  --color-parchment-300: #e7da85;
+
+  --color-oasis-500: #2d6a4f;
+  --color-oasis-600: #1b4332;
+}
+
+:root {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color-scheme: light dark;
+  background-color: #FAF6F0;
+  color: #1c1917;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background-color: #FAF6F0;
+  color: #1c1917;
+  overflow-x: hidden;
+}
+
+/* Custom Azulejo Tile Decorative Pattern */
+.azulejo-bg {
+  background-color: #f0f7fc;
+  background-image: radial-gradient(#1a5b8c 0.75px, transparent 0.75px), radial-gradient(#1a5b8c 0.75px, #f0f7fc 0.75px);
+  background-size: 30px 30px;
+  background-position: 0 0, 15px 15px;
+  background-opacity: 0.08;
+}
+
+.terracotta-gradient {
+  background: linear-gradient(135deg, #c85a32 0%, #7a2e1e 100%);
+}
+
+.azulejo-gradient {
+  background: linear-gradient(135deg, #1a5b8c 0%, #123c60 100%);
+}
+
+.hero-overlay {
+  background: linear-gradient(180deg, rgba(20, 44, 67, 0.3) 0%, rgba(20, 44, 67, 0.85) 100%);
+}
+
+/* Glassmorphism */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.glass-panel-dark {
+  background: rgba(20, 44, 67, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Leaflet Custom Marker & Popup Fixes */
+.leaflet-popup-content-wrapper {
+  background: #ffffff;
+  border-radius: 1rem;
+  padding: 0;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  border: 1px solid #e0eef7;
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+  line-height: 1.5;
+}
+
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  border-radius: 1rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  z-index: 10;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #faf6f0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #dea28a;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #c85a32;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes pulseSlow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.animate-pulse-slow {
+  animation: pulseSlow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

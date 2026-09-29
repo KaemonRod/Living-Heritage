@@ -1,0 +1,171 @@
+[
+  {
+    "id": "old-goa-unesco-walk",
+    "title": "Old Goa UNESCO Monuments Walk",
+    "subtitle": "Journey through the 'Rome of the East'",
+    "description": "A 2.5 km walking trail covering Old Goa's grandest 16th and 17th-century basilicas, cathedrals, and convent museums.",
+    "category": "Architectural Walk",
+    "durationMinutes": 120,
+    "distanceKm": 2.5,
+    "difficulty": "Easy",
+    "stopIds": [
+      "basilica-bom-jesus",
+      "se-cathedral",
+      "church-st-cajetan",
+      "museum-christian-art"
+    ],
+    "coordinates": [
+      [
+        15.5009,
+        73.9116
+      ],
+      [
+        15.5038,
+        73.9131
+      ],
+      [
+        15.5056,
+        73.9142
+      ],
+      [
+        15.5028,
+        73.9167
+      ]
+    ],
+    "coverImage": {
+      "url": "https://s7ap1.scene7.com/is/image/incredibleindia/basilica-of-bom-jesus-goa-2-musthead-hero?qlt=82&ts=1742156651015",
+      "caption": "Basilica of Bom Jesus on Old Goa UNESCO Trail",
+      "author": "Praveen P",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://s7ap1.scene7.com/is/image/incredibleindia/basilica-of-bom-jesus-goa-2-musthead-hero?qlt=82&ts=1742156651015",
+      "isVerified": true
+    },
+    "highlights": [
+      "Walk between the unplastered Bom Jesus Basilica and Se Cathedral",
+      "Inspect the Golden Bell inside Asia's largest cathedral spire",
+      "Admire Vatican-inspired cupola architecture at St. Cajetan",
+      "Examine Goan-rendered ivory and gold sacred art at Santa Monica Convent"
+    ]
+  },
+  {
+    "id": "coastal-forts-circuit",
+    "title": "Bardez Coastal Fortresses Circuit",
+    "subtitle": "Defenders of the Arabian Sea & Mandovi Estuary",
+    "description": "Explore the strategic 16th and 17th-century coastal bastions guarding North Goa's maritime gateways.",
+    "category": "Coastal Forts",
+    "durationMinutes": 180,
+    "distanceKm": 18,
+    "difficulty": "Moderate",
+    "stopIds": [
+      "fort-aguada",
+      "reis-magos-fort",
+      "chapora-fort"
+    ],
+    "coordinates": [
+      [
+        15.4925,
+        73.7736
+      ],
+      [
+        15.4972,
+        73.8086
+      ],
+      [
+        15.6056,
+        73.7364
+      ]
+    ],
+    "coverImage": {
+      "url": "https://mygoa365.com/wp-content/uploads/2023/11/aguada-fort-goa.webp",
+      "caption": "Fort Aguada lighthouse overlooking Sinquerim bay",
+      "author": "Frederick Noronha",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://mygoa365.com/wp-content/uploads/2023/11/aguada-fort-goa.webp",
+      "isVerified": true
+    },
+    "highlights": [
+      "Stand inside Fort Aguada's 2.3-million-gallon freshwater cistern",
+      "Visit Mario Miranda art galleries at restored Reis Magos Fort",
+      "Trek up Chapora laterite battlements for Vagator sunset views"
+    ]
+  },
+  {
+    "id": "ponda-spiritual-sanctuaries",
+    "title": "Ponda Spiritual Sanctuaries Trail",
+    "subtitle": "Sacred Havens of Peace & Deccani Heritage",
+    "description": "Discover Ponda's 16th to 18th-century sanctuaries where Hindu deities were safeguarded and Islamic mosques flourished.",
+    "category": "Spiritual Heritage",
+    "durationMinutes": 150,
+    "distanceKm": 12,
+    "difficulty": "Easy",
+    "stopIds": [
+      "safa-masjid",
+      "shanta-durga-temple",
+      "mangueshi-temple"
+    ],
+    "coordinates": [
+      [
+        15.4022,
+        74.0156
+      ],
+      [
+        15.3953,
+        73.9878
+      ],
+      [
+        15.4344,
+        73.9686
+      ]
+    ],
+    "coverImage": {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/5/56/Shantadurga_temple.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=original",
+      "caption": "Deepastambha tower at Shantadurga Temple in Kavlem",
+      "author": "Frederick Noronha",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/5/56/Shantadurga_temple.jpg?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=original",
+      "isVerified": true
+    },
+    "highlights": [
+      "Reflect beside the 1560 Bijapuri ablution tank at Safa Masjid",
+      "Photograph the pink Deepastambha tower at Kavlem",
+      "Learn how Mangueshi temple's idol was moved in 1560 under cover of night"
+    ]
+  },
+  {
+    "id": "panaji-latin-quarter-walk",
+    "title": "Panaji Heritage & Fontainhas Stroll",
+    "subtitle": "Azulejo Tiles, Oyster Windows & Baroque Steps",
+    "description": "An intimate walking trail through Panaji's Latin Quarter, riverfront promenades, and hill churches.",
+    "category": "Latin Quarter Stroll",
+    "durationMinutes": 90,
+    "distanceKm": 2,
+    "difficulty": "Easy",
+    "stopIds": [
+      "fontainhas-latin-quarter",
+      "immaculate-conception-church"
+    ],
+    "coordinates": [
+      [
+        15.4989,
+        73.8315
+      ],
+      [
+        15.4958,
+        73.8306
+      ]
+    ],
+    "coverImage": {
+      "url": "https://www.tourmyindia.com/states/goa/image/fontainhas-latin-quarter-goa.webp",
+      "caption": "Colonial street scene in Fontainhas, Panaji",
+      "author": "Frederick Noronha",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://www.tourmyindia.com/states/goa/image/fontainhas-latin-quarter-goa.webp",
+      "isVerified": true
+    },
+    "highlights": [
+      "Admire hand-painted azulejo ceramic house numbers",
+      "Observe oyster-shell window panes (Carepas) in traditional villas",
+      "Climb the 1871 white double-flight stairs at Panaji Church"
+    ]
+  }
+]

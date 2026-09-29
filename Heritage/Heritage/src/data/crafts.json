@@ -1,0 +1,94 @@
+[
+  {
+    "id": "azulejos-tile-painting",
+    "title": "Azulejos Ceramic Tile Painting",
+    "konkaniName": "Azulejo Kaap",
+    "region": "Bicholim & Panaji",
+    "description": "The delicate art of hand-glazing white ceramic tiles with cobalt blue mineral pigments, introduced by Portuguese tile masters and preserved by Goan artisans.",
+    "history": "Brought to Goa in the 16th century, azulejos depicted religious saint lives, historical maps, and family crests. Today, Goan artisans blend traditional cobalt blue designs with Goan flora, coconut palms, and local folklore motifs.",
+    "craftspersonSpotlight": {
+      "name": "Master Orlando de Noronha",
+      "village": "Panaji, Goa",
+      "quote": "Every tile tells a story of sea trade. When you brush cobalt blue onto raw glaze, it turns deep azure only after firing at 1000 degrees.",
+      "experienceYears": 38
+    },
+    "image": {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Azulejo_tiles_Panaji_Goa.jpg/1024px-Azulejo_tiles_Panaji_Goa.jpg",
+      "caption": "Hand-painted Goan Azulejo ceramic tile plaque",
+      "author": "Frederick Noronha",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Azulejo_tiles_Panaji_Goa.jpg",
+      "isVerified": true
+    },
+    "materials": ["Ceramic Tiles", "Cobalt Blue Oxide Pigment", "Glaze Kiln", "Fine Camel Hair Brushes"]
+  },
+  {
+    "id": "kunbi-saree-weaving",
+    "title": "Kunbi Tribal Handloom Weaving",
+    "konkaniName": "Kunbi Kapad",
+    "region": "Sanvordem & Quepem",
+    "description": "Traditional coarse cotton handloom saree featuring bold red and maroon checks, historically woven by indigenous Kunbi and Gawda tribal women for agricultural work.",
+    "history": "Worn short above ankles for ease in paddy field farming, the Kunbi saree went through a revival movement led by Goan fashion historians to preserve ancient wooden pit looms.",
+    "craftspersonSpotlight": {
+      "name": "Devaki Gaonkar",
+      "village": "Sanvordem, South Goa",
+      "quote": "The red check pattern symbolizes soil fertility and protection. We dye cotton threads with natural Madder root extract.",
+      "experienceYears": 42
+    },
+    "image": {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Kunbi_saree_pattern_Goa.jpg/1024px-Kunbi_saree_pattern_Goa.jpg",
+      "caption": "Traditional red and maroon check weave of the Goan Kunbi saree",
+      "author": "Archival Crafts Documentation",
+      "license": "CC BY 3.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Culture_of_Goa",
+      "isVerified": false
+    },
+    "materials": ["Pure Cotton Thread", "Madder Root Natural Dye", "Wooden Pit Loom", "Bamboo Shuttles"]
+  },
+  {
+    "id": "brassware-casting",
+    "title": "Goan Brass & Bronze Casting",
+    "konkaniName": "Pitto Kaam",
+    "region": "Corlim & Mapusa",
+    "description": "Lost-wax and sand casting of ornate brass Samai oil lamps, Deepastambhas, bells, and temple ritual vessels.",
+    "history": "Goan coppersmiths (Shet) held royal charters under the Kadamba Dynasty to cast temple lamps and copper plate land inscriptions. Their brass lamps remain centerpiece artifacts in Goan homes.",
+    "craftspersonSpotlight": {
+      "name": "Ramesh Shet",
+      "village": "Corlim, Tiswadi",
+      "quote": "A true Goan Samai lamp must balance on five oil wicks. The brass sound when struck must resonate cleanly like a temple bell.",
+      "experienceYears": 35
+    },
+    "image": {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Goan_brass_samai_lamp.jpg/1024px-Goan_brass_samai_lamp.jpg",
+      "caption": "Traditional Goan Samai brass lamp crafted by metal artisans",
+      "author": "Goa Metal Craft Heritage",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Culture_of_Goa",
+      "isVerified": false
+    },
+    "materials": ["Molten Brass Alloy", "Beech Wax", "Fine Clay Molds", "Engraving Chisels"]
+  },
+  {
+    "id": "terracotta-pottery",
+    "title": "Bicholim Terracotta & Clay Crafts",
+    "konkaniName": "Motiya Kaam",
+    "region": "Bicholim",
+    "description": "Hand-molded terracotta roofing tiles, decorative garden pots, and Ganesha idols crafted from nutrient-rich Bicholim riverbank clay.",
+    "history": "Potters (Kumbhars) of Bicholim have fashioned roof tiles (Nall) for Goan houses for centuries, shaping them over clay wheels before wood-firing them in outdoor kilns.",
+    "craftspersonSpotlight": {
+      "name": "Gurudas Kumbhar",
+      "village": "Bicholim, North Goa",
+      "quote": "When rainwater touches a fired terracotta tile, it releases the sweet scent of Goan soil. That scent is our heritage.",
+      "experienceYears": 30
+    },
+    "image": {
+      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Bicholim_Terracotta_Pottery_Goa.jpg/1024px-Bicholim_Terracotta_Pottery_Goa.jpg",
+      "caption": "Terracotta pottery and clay water pots crafted in Bicholim",
+      "author": "Frederick Noronha",
+      "license": "CC BY-SA 4.0",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Bicholim",
+      "isVerified": true
+    },
+    "materials": ["Red Alluvial Clay", "Potter's Wheel", "Wood Kiln", "Natural Clay Slip"]
+  }
+]
