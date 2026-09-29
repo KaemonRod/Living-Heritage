@@ -80,9 +80,3 @@ Living-Heritage/
         ├── package.json
         └── vite.config.ts
 ```
-
----
-
-## 📜 License
-
-This project is open source and available under the [MIT License](LICENSE).
