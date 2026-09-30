@@ -14,15 +14,47 @@ export interface RouteResult {
   steps: RouteStep[];
   totalDistanceKm: number;
   totalDurationMins: number;
+  formattedDuration: string;
   mode: TransportMode;
 }
 
-// OSRM profile mapping
-const OSRM_PROFILES: Record<TransportMode, string> = {
-  driving: 'driving',
-  biking: 'bike',
-  walking: 'foot',
-};
+/**
+ * Format total travel time in human-friendly format (e.g. "~23 mins" or "~5 hr 9 mins")
+ */
+export function formatDuration(totalMins: number): string {
+  if (totalMins < 60) {
+    return `~${totalMins} mins`;
+  }
+  const hours = Math.floor(totalMins / 60);
+  const mins = totalMins % 60;
+  if (mins === 0) {
+    return `~${hours} hr${hours > 1 ? 's' : ''}`;
+  }
+  return `~${hours} hr ${mins} min${mins > 1 ? 's' : ''}`;
+}
+
+/**
+ * Calculate mode-specific travel duration based on real road distance & average Goa speeds
+ */
+export function calculateDurationForMode(
+  distanceKm: number,
+  drivingDurationSec: number,
+  mode: TransportMode
+): number {
+  if (mode === 'walking') {
+    // Walking average speed in Goa: ~4.5 km/h (75 m/min)
+    return Math.max(1, Math.round((distanceKm / 4.5) * 60));
+  }
+  if (mode === 'biking') {
+    // Scooter / Two-wheeler average speed in Goa: ~32 km/h
+    return Math.max(1, Math.round((distanceKm / 32) * 60));
+  }
+  // Car / Driving: Use OSRM driving duration if available, else ~35 km/h average
+  if (drivingDurationSec > 0) {
+    return Math.max(1, Math.round(drivingDurationSec / 60));
+  }
+  return Math.max(1, Math.round((distanceKm / 35) * 60));
+}
 
 /**
  * Fetch real turn-by-turn road routing between origin and destination using OSRM.
@@ -33,8 +65,13 @@ export async function fetchRoadRoute(
   mode: TransportMode = 'driving',
   destinationName: string = 'Destination'
 ): Promise<RouteResult> {
-  const profile = OSRM_PROFILES[mode];
-  const url = `https://router.project-osrm.org/route/v1/${profile}/${origin[1]},${origin[0]};${destination[1]},${destination[0]}?overview=full&geometries=geojson&steps=true`;
+  // Use OSRM driving endpoint for reliable road geometry and turn steps
+  const url = `https://router.project-osrm.org/route/v1/driving/${origin[1]},${origin[0]};${destination[1]},${destination[0]}?overview=full&geometries=geojson&steps=true`;
+
+  let geometry: [number, number][] = [];
+  let steps: RouteStep[] = [];
+  let totalDistanceKm = 0;
+  let osrmDurationSec = 0;
 
   try {
     const controller = new AbortController();
@@ -43,65 +80,74 @@ export async function fetchRoadRoute(
     const response = await fetch(url, { signal: controller.signal });
     clearTimeout(timeoutId);
 
-    if (!response.ok) {
-      throw new Error(`OSRM API error HTTP ${response.status}`);
-    }
+    if (response.ok) {
+      const data = await response.json();
 
-    const data = await response.json();
+      if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+        const route = data.routes[0];
 
-    if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
-      const route = data.routes[0];
-      
-      // Extract geometry [lng, lat] -> [lat, lng]
-      const geometry: [number, number][] = route.geometry.coordinates.map(
-        (coord: [number, number]) => [coord[1], coord[0]]
-      );
+        // Extract geometry [lng, lat] -> [lat, lng]
+        geometry = route.geometry.coordinates.map(
+          (coord: [number, number]) => [coord[1], coord[0]]
+        );
 
-      const totalDistanceKm = Math.round((route.distance / 1000) * 10) / 10;
-      const totalDurationMins = Math.max(1, Math.round(route.duration / 60));
+        totalDistanceKm = Math.round((route.distance / 1000) * 10) / 10;
+        osrmDurationSec = route.duration;
 
-      // Parse turn-by-turn steps
-      const steps: RouteStep[] = [];
-      if (route.legs && route.legs[0] && route.legs[0].steps) {
-        const rawSteps = route.legs[0].steps;
-        rawSteps.forEach((s: any, idx: number) => {
-          const m = s.maneuver;
-          const stepLoc: [number, number] = [m.location[1], m.location[0]];
-          
-          let instruction = formatManeuverInstruction(
-            m.type,
-            m.modifier,
-            s.name,
-            destinationName,
-            idx,
-            rawSteps.length
-          );
+        // Parse turn-by-turn steps
+        if (route.legs && route.legs[0] && route.legs[0].steps) {
+          const rawSteps = route.legs[0].steps;
+          rawSteps.forEach((s: any, idx: number) => {
+            const m = s.maneuver;
+            const stepLoc: [number, number] = [m.location[1], m.location[0]];
 
-          steps.push({
-            instruction,
-            distanceMeters: Math.round(s.distance),
-            durationSeconds: Math.round(s.duration),
-            maneuverType: normalizeManeuverType(m.type),
-            modifier: m.modifier,
-            location: stepLoc,
+            const instruction = formatManeuverInstruction(
+              m.type,
+              m.modifier,
+              s.name,
+              destinationName,
+              idx,
+              rawSteps.length
+            );
+
+            // Mode-appropriate step duration
+            const stepDurationSec = calculateStepDuration(s.duration, s.distance, mode);
+
+            steps.push({
+              instruction,
+              distanceMeters: Math.round(s.distance),
+              durationSeconds: stepDurationSec,
+              maneuverType: normalizeManeuverType(m.type),
+              modifier: m.modifier,
+              location: stepLoc,
+            });
           });
-        });
+        }
       }
-
-      return {
-        geometry,
-        steps,
-        totalDistanceKm,
-        totalDurationMins,
-        mode,
-      };
     }
   } catch (error) {
-    console.warn('OSRM routing fetch failed or timed out, falling back to simulated road steps:', error);
+    console.warn('OSRM routing fetch failed, falling back to simulated road steps:', error);
   }
 
   // Fallback if API is offline or restricted: Interpolate road geometry and turn steps
-  return generateFallbackRoute(origin, destination, mode, destinationName);
+  if (geometry.length === 0) {
+    const fallback = generateFallbackRoute(origin, destination, mode, destinationName);
+    geometry = fallback.geometry;
+    steps = fallback.steps;
+    totalDistanceKm = fallback.totalDistanceKm;
+    osrmDurationSec = fallback.totalDurationMins * 60;
+  }
+
+  const totalDurationMins = calculateDurationForMode(totalDistanceKm, osrmDurationSec, mode);
+
+  return {
+    geometry,
+    steps,
+    totalDistanceKm,
+    totalDurationMins,
+    formattedDuration: formatDuration(totalDurationMins),
+    mode,
+  };
 }
 
 function normalizeManeuverType(type: string): RouteStep['maneuverType'] {
@@ -148,6 +194,16 @@ function formatManeuverInstruction(
   return `Continue straight${onStreet}`;
 }
 
+function calculateStepDuration(stepOsrmSec: number, stepDistanceMeters: number, mode: TransportMode): number {
+  if (mode === 'walking') {
+    return Math.round(stepDistanceMeters / 1.25); // ~1.25 m/s walking speed
+  }
+  if (mode === 'biking') {
+    return Math.round(stepDistanceMeters / 8.8); // ~8.8 m/s scooter speed
+  }
+  return Math.round(stepOsrmSec);
+}
+
 /**
  * Intelligent fallback route generator with turn-by-turn steps if OSRM is unreachable
  */
@@ -169,13 +225,10 @@ function generateFallbackRoute(
       Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const straightKm = Math.round(R * c * 10) / 10;
-  
+
   // Road factor (roads are ~1.3x straight line distance in Goa)
   const roadKm = Math.round(straightKm * 1.3 * 10) / 10;
-  
-  // Speed estimate (driving ~35km/h, biking ~25km/h, walking ~4.5km/h)
-  const speedKmH = mode === 'walking' ? 4.5 : mode === 'biking' ? 25 : 35;
-  const mins = Math.max(2, Math.round((roadKm / speedKmH) * 60));
+  const mins = calculateDurationForMode(roadKm, 0, mode);
 
   // Generate curved road waypoints
   const geometry: [number, number][] = [origin];
@@ -198,32 +251,32 @@ function generateFallbackRoute(
   const steps: RouteStep[] = [
     {
       instruction: `Head main road toward ${destName}`,
-      distanceMeters: Math.round((roadKm * 1000) * 0.25),
-      durationSeconds: Math.round((mins * 60) * 0.25),
+      distanceMeters: Math.round(roadKm * 1000 * 0.25),
+      durationSeconds: Math.round(mins * 60 * 0.25),
       maneuverType: 'depart',
       modifier: 'straight',
       location: origin,
     },
     {
       instruction: 'Turn slight right onto Goa State Highway',
-      distanceMeters: Math.round((roadKm * 1000) * 0.35),
-      durationSeconds: Math.round((mins * 60) * 0.35),
+      distanceMeters: Math.round(roadKm * 1000 * 0.35),
+      durationSeconds: Math.round(mins * 60 * 0.35),
       maneuverType: 'turn',
       modifier: 'slight right',
       location: mid1,
     },
     {
       instruction: 'At the roundabout, take 2nd exit toward village heritage junction',
-      distanceMeters: Math.round((roadKm * 1000) * 0.25),
-      durationSeconds: Math.round((mins * 60) * 0.25),
+      distanceMeters: Math.round(roadKm * 1000 * 0.25),
+      durationSeconds: Math.round(mins * 60 * 0.25),
       maneuverType: 'roundabout',
       modifier: 'straight',
       location: mid2,
     },
     {
       instruction: 'Turn left onto heritage approach road',
-      distanceMeters: Math.round((roadKm * 1000) * 0.15),
-      durationSeconds: Math.round((mins * 60) * 0.15),
+      distanceMeters: Math.round(roadKm * 1000 * 0.15),
+      durationSeconds: Math.round(mins * 60 * 0.15),
       maneuverType: 'turn',
       modifier: 'left',
       location: mid3,
@@ -242,6 +295,7 @@ function generateFallbackRoute(
     steps,
     totalDistanceKm: roadKm,
     totalDurationMins: mins,
+    formattedDuration: formatDuration(mins),
     mode,
   };
 }

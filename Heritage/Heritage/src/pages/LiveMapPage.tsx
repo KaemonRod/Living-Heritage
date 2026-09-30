@@ -683,7 +683,7 @@ export const LiveMapPage: React.FC = () => {
                 📏 {activeDirections.route.totalDistanceKm} km
               </span>
               <span className="flex items-center gap-1 font-bold text-emerald-300 bg-white/10 px-2.5 py-1 rounded-lg">
-                ⏱️ ~{activeDirections.route.totalDurationMins} min travel
+                ⏱️ {activeDirections.route.formattedDuration} travel
               </span>
             </div>
           </div>
@@ -1013,7 +1013,7 @@ export const LiveMapPage: React.FC = () => {
                   {activeDirections.route.totalDistanceKm} km
                 </span>
                 <span className="text-[11px] font-semibold text-stone-500">
-                  ~{activeDirections.route.totalDurationMins} mins
+                  {activeDirections.route.formattedDuration}
                 </span>
               </div>
             </div>
