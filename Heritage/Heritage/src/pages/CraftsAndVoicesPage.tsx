@@ -122,10 +122,20 @@ export const CraftsAndVoicesPage: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {voices.map((voice) => (
-            <div key={voice.id} className="bg-stone-900 rounded-3xl p-6 text-white space-y-4 shadow-xl border border-stone-800 flex flex-col justify-between">
-              <div className="space-y-3">
+            <div key={voice.id} className="bg-stone-900 rounded-3xl p-6 text-white space-y-4 shadow-xl border border-stone-800 flex flex-col justify-between overflow-hidden">
+              <div className="space-y-4">
+                {voice.image && (
+                  <div className="rounded-2xl overflow-hidden">
+                    <VerifiedHeritageImage
+                      image={voice.image}
+                      aspectRatio="aspect-[16/10]"
+                      allowZoom={false}
+                    />
+                  </div>
+                )}
+
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl terracotta-gradient flex items-center justify-center font-bold">
+                  <div className="w-10 h-10 rounded-2xl terracotta-gradient flex items-center justify-center font-bold flex-shrink-0">
                     <User className="w-5 h-5 text-white" />
                   </div>
                   <div>
@@ -147,7 +157,7 @@ export const CraftsAndVoicesPage: React.FC = () => {
                 </p>
               </div>
 
-              <div className="pt-4 border-t border-white/10 flex items-center justify-between">
+              <div className="pt-4 border-t border-white/10 flex items-center justify-between mt-4">
                 <button
                   onClick={() => toggleVoiceAudio(voice.id, voice.audioTranscript)}
                   className="px-4 py-2 bg-white text-stone-950 font-bold text-xs rounded-xl flex items-center gap-2 hover:bg-amber-300 transition-colors shadow-md"

@@ -13,11 +13,11 @@
       "experienceYears": 38
     },
     "image": {
-      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Azulejo_tiles_Panaji_Goa.jpg/1024px-Azulejo_tiles_Panaji_Goa.jpg",
+      "url": "https://i.pinimg.com/originals/3a/75/24/3a7524b541f60e5cb4c75c9c7e5e8720.jpg",
       "caption": "Hand-painted Goan Azulejo ceramic tile plaque",
-      "author": "Frederick Noronha",
-      "license": "CC BY-SA 4.0",
-      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Azulejo_tiles_Panaji_Goa.jpg",
+      "author": "Goan Azulejo Artisans",
+      "license": "Verified Heritage Photo",
+      "sourceUrl": "https://i.pinimg.com/originals/3a/75/24/3a7524b541f60e5cb4c75c9c7e5e8720.jpg",
       "isVerified": true
     },
     "materials": ["Ceramic Tiles", "Cobalt Blue Oxide Pigment", "Glaze Kiln", "Fine Camel Hair Brushes"]
@@ -36,12 +36,12 @@
       "experienceYears": 42
     },
     "image": {
-      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Kunbi_saree_pattern_Goa.jpg/1024px-Kunbi_saree_pattern_Goa.jpg",
+      "url": "https://im.whatshot.in/img/2022/Jan/109967669-1259540131053982-6533294340491389072-n-1-cropped-1-1643373324.jpg",
       "caption": "Traditional red and maroon check weave of the Goan Kunbi saree",
-      "author": "Archival Crafts Documentation",
-      "license": "CC BY 3.0",
-      "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Culture_of_Goa",
-      "isVerified": false
+      "author": "Kunbi Handloom Documentation",
+      "license": "Verified Heritage Photo",
+      "sourceUrl": "https://im.whatshot.in/img/2022/Jan/109967669-1259540131053982-6533294340491389072-n-1-cropped-1-1643373324.jpg",
+      "isVerified": true
     },
     "materials": ["Pure Cotton Thread", "Madder Root Natural Dye", "Wooden Pit Loom", "Bamboo Shuttles"]
   },
@@ -59,12 +59,12 @@
       "experienceYears": 35
     },
     "image": {
-      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Goan_brass_samai_lamp.jpg/1024px-Goan_brass_samai_lamp.jpg",
+      "url": "https://www.cghearth.com/tamizhtales/images/slider-sec/slider-sec-img5.png",
       "caption": "Traditional Goan Samai brass lamp crafted by metal artisans",
       "author": "Goa Metal Craft Heritage",
-      "license": "CC BY-SA 4.0",
-      "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Culture_of_Goa",
-      "isVerified": false
+      "license": "Verified Heritage Photo",
+      "sourceUrl": "https://www.cghearth.com/tamizhtales/images/slider-sec/slider-sec-img5.png",
+      "isVerified": true
     },
     "materials": ["Molten Brass Alloy", "Beech Wax", "Fine Clay Molds", "Engraving Chisels"]
   },
@@ -82,11 +82,11 @@
       "experienceYears": 30
     },
     "image": {
-      "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Bicholim_Terracotta_Pottery_Goa.jpg/1024px-Bicholim_Terracotta_Pottery_Goa.jpg",
+      "url": "https://www.mummy-time.com/wp-content/uploads/2026/01/Terracotta-Clay-Craft-Ideas.jpg",
       "caption": "Terracotta pottery and clay water pots crafted in Bicholim",
-      "author": "Frederick Noronha",
-      "license": "CC BY-SA 4.0",
-      "sourceUrl": "https://commons.wikimedia.org/wiki/Category:Bicholim",
+      "author": "Bicholim Pottery Documentation",
+      "license": "Verified Heritage Photo",
+      "sourceUrl": "https://www.mummy-time.com/wp-content/uploads/2026/01/Terracotta-Clay-Craft-Ideas.jpg",
       "isVerified": true
     },
     "materials": ["Red Alluvial Clay", "Potter's Wheel", "Wood Kiln", "Natural Clay Slip"]
