@@ -13,12 +13,20 @@ import {
   RotateCcw,
   Footprints,
   Car,
+  Bike,
+  CornerUpRight,
+  CornerUpLeft,
+  ArrowUp,
+  RotateCw,
   Layers,
   AlertCircle,
   CheckCircle2,
   Sparkles,
+  Loader2,
 } from 'lucide-react';
 import { heritageService, calculateDistanceKm } from '../services/heritageService';
+import { fetchRoadRoute } from '../services/routingService';
+import type { TransportMode, RouteResult, RouteStep } from '../services/routingService';
 import type { HeritageCategory, HeritageSite, SmartTrail } from '../types';
 
 // Custom SVG Icons generator for Leaflet categories
@@ -82,6 +90,56 @@ function createTrailStopIcon(index: number, isSelected: boolean = false) {
     iconAnchor: [0, 0],
     popupAnchor: [0, -20],
   });
+}
+
+// Turn-by-Turn Maneuver Step Marker Icon
+function createTurnMarkerIcon(index: number, isSelected: boolean = false) {
+  const size = isSelected ? 34 : 26;
+  const bg = isSelected ? '#2563eb' : '#3b82f6';
+  const scale = isSelected ? 'scale(1.15)' : 'scale(1)';
+
+  return L.divIcon({
+    className: 'custom-turn-marker',
+    html: `
+      <div style="
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: ${size}px;
+        height: ${size}px;
+        border-radius: 50%;
+        background: ${bg};
+        color: #ffffff;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-weight: 800;
+        font-size: 11px;
+        border: 2px solid #ffffff;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+        transform: translate(-50%, -50%) ${scale};
+        transition: transform 0.2s ease;
+      ">
+        ${index + 1}
+      </div>
+    `,
+    iconSize: [size, size],
+    iconAnchor: [0, 0],
+    popupAnchor: [0, -14],
+  });
+}
+
+// Icon mapper for turn maneuvers
+function getManeuverIcon(maneuverType: RouteStep['maneuverType'], modifier?: string) {
+  if (maneuverType === 'arrive') return <MapPin className="w-4 h-4 text-emerald-600" />;
+  if (maneuverType === 'depart') return <Navigation className="w-4 h-4 text-blue-600" />;
+  if (maneuverType === 'roundabout') return <RotateCw className="w-4 h-4 text-amber-600" />;
+
+  if (modifier?.includes('left')) {
+    return <CornerUpLeft className="w-4 h-4 text-azulejo-600" />;
+  }
+  if (modifier?.includes('right')) {
+    return <CornerUpRight className="w-4 h-4 text-terracotta-600" />;
+  }
+  return <ArrowUp className="w-4 h-4 text-stone-600" />;
 }
 
 // User Location Glowing Marker
@@ -158,13 +216,14 @@ export const LiveMapPage: React.FC = () => {
     details?: string;
   } | null>(null);
 
-  // Directions state (Point-to-point from User Position to site)
+  // Turn-by-turn road routing states
   const [activeDirections, setActiveDirections] = useState<{
     site: HeritageSite;
-    distanceKm: number;
-    walkMinutes: number;
-    driveMinutes: number;
+    route: RouteResult;
   } | null>(null);
+  const [transportMode, setTransportMode] = useState<TransportMode>('driving');
+  const [isCalculatingRoute, setIsCalculatingRoute] = useState<boolean>(false);
+  const [activeStepIndex, setActiveStepIndex] = useState<number | null>(null);
 
   // Viewport animation controllers
   const [flyToTarget, setFlyToTarget] = useState<{ coords: [number, number]; zoom: number; key: number } | null>(null);
@@ -298,35 +357,62 @@ export const LiveMapPage: React.FC = () => {
     setFlyToTarget({ coords: defaultCenter, zoom: 11, key: Date.now() });
   };
 
-  // Calculate Directions from userPos to a Site
-  const calculateDirectionsTo = (site: HeritageSite, customOrigin?: [number, number]) => {
-    const origin = customOrigin || userPos;
-    if (!origin) {
-      // Prompt user to locate first or pick a preset
-      handleLocateMe();
-      setLocationNotice({
-        type: 'preset',
-        message: 'Please enable location or pick a starting point to get directions to ' + site.title,
-      });
-      return;
+  // Calculate Turn-by-Turn Road Directions from userPos to a Site
+  const calculateDirectionsTo = useCallback(
+    async (
+      site: HeritageSite,
+      customOrigin?: [number, number],
+      mode: TransportMode = transportMode
+    ) => {
+      const origin = customOrigin || userPos;
+      if (!origin) {
+        // Prompt user to locate first or pick a preset
+        handleLocateMe();
+        setLocationNotice({
+          type: 'preset',
+          message: 'Please enable location or pick a starting point to get directions to ' + site.title,
+        });
+        return;
+      }
+
+      setIsCalculatingRoute(true);
+      try {
+        const route = await fetchRoadRoute(
+          origin,
+          [site.location.latitude, site.location.longitude],
+          mode,
+          site.title
+        );
+
+        setActiveDirections({
+          site,
+          route,
+        });
+        setTransportMode(mode);
+        setActiveStepIndex(null);
+
+        // Fit map bounds to show the entire road polyline
+        if (route.geometry && route.geometry.length > 0) {
+          setFitBoundsTarget({
+            bounds: route.geometry,
+            key: Date.now(),
+          });
+        }
+      } catch (err) {
+        console.error('Failed to calculate road route:', err);
+      } finally {
+        setIsCalculatingRoute(false);
+      }
+    },
+    [userPos, transportMode, handleLocateMe]
+  );
+
+  const handleSwitchMode = (newMode: TransportMode) => {
+    if (activeDirections) {
+      calculateDirectionsTo(activeDirections.site, undefined, newMode);
+    } else {
+      setTransportMode(newMode);
     }
-
-    const dist = calculateDistanceKm(origin[0], origin[1], site.location.latitude, site.location.longitude);
-    const walkMin = Math.round((dist / 4.5) * 60); // approx 4.5 km/h walking speed
-    const driveMin = Math.max(2, Math.round((dist / 35) * 60)); // approx 35 km/h driving speed in Goa
-
-    setActiveDirections({
-      site,
-      distanceKm: dist,
-      walkMinutes: walkMin,
-      driveMinutes: driveMin,
-    });
-
-    // Fit bounds to include both user and site
-    setFitBoundsTarget({
-      bounds: [origin, [site.location.latitude, site.location.longitude]],
-      key: Date.now(),
-    });
   };
 
   // Google Maps Directions Multi-stop URL for Active Trail
@@ -582,43 +668,76 @@ export const LiveMapPage: React.FC = () => {
       {/* Point-to-Point Directions Floating Banner */}
       {activeDirections && (
         <div className="bg-azulejo-900 text-white p-5 rounded-3xl border border-azulejo-700 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4 animate-fade-in">
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             <div className="flex items-center gap-2 text-azulejo-300 text-xs font-bold uppercase tracking-wider">
               <RouteIcon className="w-4 h-4 text-emerald-400" />
-              <span>Live Directions from {userLocationSource || 'Your Position'}</span>
+              <span>Live In-App Turn-by-Turn Directions from {userLocationSource || 'Your Position'}</span>
             </div>
-            <h3 className="font-serif font-bold text-lg text-white">
+            <h3 className="font-serif font-bold text-xl text-white">
               Route to {activeDirections.site.title}
             </h3>
+            
+            {/* Route Stats & Mode Selection Row */}
             <div className="flex flex-wrap items-center gap-4 text-xs text-stone-200 pt-1">
-              <span className="flex items-center gap-1 font-bold text-amber-300">
-                📏 {activeDirections.distanceKm} km
+              <span className="flex items-center gap-1 font-bold text-amber-300 bg-white/10 px-2.5 py-1 rounded-lg">
+                📏 {activeDirections.route.totalDistanceKm} km
               </span>
-              <span className="flex items-center gap-1">
-                <Footprints className="w-3.5 h-3.5 text-blue-300" />
-                ~{activeDirections.walkMinutes} min walk
-              </span>
-              <span className="flex items-center gap-1">
-                <Car className="w-3.5 h-3.5 text-emerald-300" />
-                ~{activeDirections.driveMinutes} min drive
+              <span className="flex items-center gap-1 font-bold text-emerald-300 bg-white/10 px-2.5 py-1 rounded-lg">
+                ⏱️ ~{activeDirections.route.totalDurationMins} min travel
               </span>
             </div>
           </div>
 
+          {/* Mode Switcher Tabs */}
           <div className="flex items-center gap-2 shrink-0">
-            <a
-              href={`https://www.google.com/maps/dir/?api=1&origin=${userPos ? `${userPos[0]},${userPos[1]}` : ''}&destination=${activeDirections.site.location.latitude},${activeDirections.site.location.longitude}&travelmode=driving`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 shadow-md transition-all"
-            >
-              <Navigation className="w-3.5 h-3.5" />
-              <span>Start Turn-by-Turn GPS</span>
-            </a>
+            <div className="flex items-center bg-azulejo-950/80 p-1.5 rounded-2xl border border-azulejo-700/60 gap-1">
+              <button
+                onClick={() => handleSwitchMode('driving')}
+                disabled={isCalculatingRoute}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
+                  transportMode === 'driving'
+                    ? 'bg-amber-400 text-azulejo-950 shadow-sm'
+                    : 'text-azulejo-200 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                <Car className="w-3.5 h-3.5" />
+                <span>Car</span>
+              </button>
+
+              <button
+                onClick={() => handleSwitchMode('biking')}
+                disabled={isCalculatingRoute}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
+                  transportMode === 'biking'
+                    ? 'bg-amber-400 text-azulejo-950 shadow-sm'
+                    : 'text-azulejo-200 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                <Bike className="w-3.5 h-3.5" />
+                <span>Scooter</span>
+              </button>
+
+              <button
+                onClick={() => handleSwitchMode('walking')}
+                disabled={isCalculatingRoute}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
+                  transportMode === 'walking'
+                    ? 'bg-amber-400 text-azulejo-950 shadow-sm'
+                    : 'text-azulejo-200 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                <Footprints className="w-3.5 h-3.5" />
+                <span>Walk</span>
+              </button>
+            </div>
+
+            {isCalculatingRoute && (
+              <Loader2 className="w-5 h-5 text-amber-300 animate-spin" />
+            )}
 
             <button
               onClick={() => setActiveDirections(null)}
-              className="p-2 bg-azulejo-800 hover:bg-azulejo-700 text-stone-300 rounded-xl"
+              className="p-2 bg-azulejo-800 hover:bg-azulejo-700 text-stone-300 rounded-xl transition-colors ml-2"
               title="Close Directions"
             >
               <X className="w-4 h-4" />
@@ -632,7 +751,7 @@ export const LiveMapPage: React.FC = () => {
         
         {/* Map Canvas (Spans 3 or 4 columns) */}
         <div className={`relative h-[65vh] sm:h-[72vh] rounded-3xl overflow-hidden border-2 border-stone-200 shadow-xl ${
-          activeTrail ? 'lg:col-span-3' : 'lg:col-span-4'
+          activeTrail || activeDirections ? 'lg:col-span-3' : 'lg:col-span-4'
         }`}>
           <MapContainer
             center={defaultCenter}
@@ -687,20 +806,64 @@ export const LiveMapPage: React.FC = () => {
               </>
             )}
 
-            {/* Directions Polyline from User Location to Destination Site */}
-            {activeDirections && userPos && (
-              <Polyline
-                positions={[
-                  userPos,
-                  [activeDirections.site.location.latitude, activeDirections.site.location.longitude],
-                ]}
-                pathOptions={{
-                  color: '#2563eb',
-                  weight: 4,
-                  dashArray: '8, 8',
-                  opacity: 0.85,
-                }}
-              />
+            {/* REAL ROAD ROUTE POLYLINE (Turn-by-turn Navigation) */}
+            {activeDirections && activeDirections.route.geometry.length > 0 && (
+              <>
+                {/* Outer Glow Line */}
+                <Polyline
+                  positions={activeDirections.route.geometry}
+                  pathOptions={{
+                    color: '#93c5fd',
+                    weight: 9,
+                    opacity: 0.7,
+                  }}
+                />
+                {/* Inner Real Road Line */}
+                <Polyline
+                  positions={activeDirections.route.geometry}
+                  pathOptions={{
+                    color: '#2563eb',
+                    weight: 5,
+                    opacity: 0.95,
+                  }}
+                />
+
+                {/* Turn-by-Turn Step Markers */}
+                {activeDirections.route.steps.map((step, idx) => (
+                  <Marker
+                    key={`turn-step-${idx}`}
+                    position={step.location}
+                    icon={createTurnMarkerIcon(idx, activeStepIndex === idx)}
+                    eventHandlers={{
+                      click: () => {
+                        setActiveStepIndex(idx);
+                        setFlyToTarget({
+                          coords: step.location,
+                          zoom: 16,
+                          key: Date.now(),
+                        });
+                      },
+                    }}
+                  >
+                    <Popup>
+                      <div className="p-1.5 space-y-1 text-xs">
+                        <div className="flex items-center gap-1 text-blue-600 font-bold">
+                          {getManeuverIcon(step.maneuverType, step.modifier)}
+                          <span>Step {idx + 1} of {activeDirections.route.steps.length}</span>
+                        </div>
+                        <p className="font-semibold text-stone-900 leading-snug">{step.instruction}</p>
+                        {step.distanceMeters > 0 && (
+                          <span className="text-[10px] text-stone-500 block font-mono">
+                            {step.distanceMeters > 1000
+                              ? `${(step.distanceMeters / 1000).toFixed(1)} km leg`
+                              : `${step.distanceMeters} m leg`}
+                          </span>
+                        )}
+                      </div>
+                    </Popup>
+                  </Marker>
+                ))}
+              </>
             )}
 
             {/* SMART TRAIL: Route Polyline & Sequence Stop Markers */}
@@ -760,7 +923,8 @@ export const LiveMapPage: React.FC = () => {
                         <div className="flex items-center gap-1.5 pt-1">
                           <button
                             onClick={() => calculateDirectionsTo(site)}
-                            className="flex-1 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-[11px] rounded-lg text-center flex items-center justify-center gap-1 transition-colors"
+                            disabled={isCalculatingRoute}
+                            className="flex-1 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-[11px] rounded-lg text-center flex items-center justify-center gap-1 transition-colors disabled:opacity-50"
                           >
                             <Navigation className="w-3 h-3" />
                             <span>Directions</span>
@@ -810,7 +974,8 @@ export const LiveMapPage: React.FC = () => {
                       <div className="flex items-center gap-1.5 pt-1">
                         <button
                           onClick={() => calculateDirectionsTo(site)}
-                          className="flex-1 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-[11px] rounded-lg text-center flex items-center justify-center gap-1 transition-colors"
+                          disabled={isCalculatingRoute}
+                          className="flex-1 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-[11px] rounded-lg text-center flex items-center justify-center gap-1 transition-colors disabled:opacity-50"
                         >
                           <Navigation className="w-3 h-3" />
                           <span>Get Directions</span>
@@ -830,6 +995,127 @@ export const LiveMapPage: React.FC = () => {
             )}
           </MapContainer>
         </div>
+
+        {/* Turn-by-Turn Navigation Side Panel (When Directions are Active) */}
+        {activeDirections && (
+          <div className="lg:col-span-1 bg-white rounded-3xl p-5 border border-stone-200 shadow-md space-y-4 max-h-[72vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-stone-100 pb-3">
+              <div>
+                <span className="text-[10px] font-bold uppercase text-blue-600 tracking-wider">
+                  Turn-by-Turn Steps
+                </span>
+                <h4 className="font-serif font-bold text-base text-stone-900 truncate max-w-[170px]">
+                  {activeDirections.site.title}
+                </h4>
+              </div>
+              <div className="text-right">
+                <span className="text-xs font-black text-blue-700 block">
+                  {activeDirections.route.totalDistanceKm} km
+                </span>
+                <span className="text-[11px] font-semibold text-stone-500">
+                  ~{activeDirections.route.totalDurationMins} mins
+                </span>
+              </div>
+            </div>
+
+            {/* Mode Toggle Switcher inside Side Panel */}
+            <div className="flex items-center justify-between bg-stone-100 p-1.5 rounded-2xl gap-1">
+              <button
+                onClick={() => handleSwitchMode('driving')}
+                disabled={isCalculatingRoute}
+                className={`flex-1 py-1.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition-all ${
+                  transportMode === 'driving'
+                    ? 'bg-white text-stone-900 shadow-sm'
+                    : 'text-stone-600 hover:text-stone-900'
+                }`}
+              >
+                <Car className="w-3.5 h-3.5 text-blue-600" />
+                <span>Car</span>
+              </button>
+
+              <button
+                onClick={() => handleSwitchMode('biking')}
+                disabled={isCalculatingRoute}
+                className={`flex-1 py-1.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition-all ${
+                  transportMode === 'biking'
+                    ? 'bg-white text-stone-900 shadow-sm'
+                    : 'text-stone-600 hover:text-stone-900'
+                }`}
+              >
+                <Bike className="w-3.5 h-3.5 text-emerald-600" />
+                <span>Scooter</span>
+              </button>
+
+              <button
+                onClick={() => handleSwitchMode('walking')}
+                disabled={isCalculatingRoute}
+                className={`flex-1 py-1.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition-all ${
+                  transportMode === 'walking'
+                    ? 'bg-white text-stone-900 shadow-sm'
+                    : 'text-stone-600 hover:text-stone-900'
+                }`}
+              >
+                <Footprints className="w-3.5 h-3.5 text-amber-600" />
+                <span>Walk</span>
+              </button>
+            </div>
+
+            {/* Steps List */}
+            <div className="space-y-2 relative">
+              <div className="flex items-center justify-between text-[11px] font-bold text-stone-500 pb-1">
+                <span>{activeDirections.route.steps.length} Maneuver Steps</span>
+                <span className="text-[10px] text-stone-400">Click step to highlight</span>
+              </div>
+
+              {activeDirections.route.steps.map((step, idx) => (
+                <div
+                  key={`nav-step-${idx}`}
+                  onClick={() => {
+                    setActiveStepIndex(idx);
+                    setFlyToTarget({
+                      coords: step.location,
+                      zoom: 16,
+                      key: Date.now(),
+                    });
+                  }}
+                  className={`p-3 rounded-2xl border text-left cursor-pointer transition-all space-y-1 ${
+                    activeStepIndex === idx
+                      ? 'bg-blue-50 border-blue-400 ring-2 ring-blue-200'
+                      : 'bg-stone-50/70 border-stone-200 hover:bg-stone-100'
+                  }`}
+                >
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-7 h-7 rounded-xl bg-white border border-stone-200 shadow-xs flex items-center justify-center shrink-0 mt-0.5">
+                      {getManeuverIcon(step.maneuverType, step.modifier)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-xs text-stone-900 leading-snug">
+                        {step.instruction}
+                      </p>
+                      {step.distanceMeters > 0 && (
+                        <span className="text-[10px] text-stone-500 font-mono block mt-0.5">
+                          {step.distanceMeters > 1000
+                            ? `${(step.distanceMeters / 1000).toFixed(1)} km leg`
+                            : `${step.distanceMeters} m leg`}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <a
+              href={`https://www.google.com/maps/dir/?api=1&origin=${userPos ? `${userPos[0]},${userPos[1]}` : ''}&destination=${activeDirections.site.location.latitude},${activeDirections.site.location.longitude}&travelmode=${transportMode === 'walking' ? 'walking' : 'driving'}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-colors border border-stone-200"
+            >
+              <ExternalLink className="w-3.5 h-3.5 text-stone-500" />
+              <span>External GPS Navigation</span>
+            </a>
+          </div>
+        )}
 
         {/* Trail Itinerary Step-by-Step Panel (When a Trail is Active) */}
         {activeTrail && (
