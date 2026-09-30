@@ -66,6 +66,20 @@ body {
   background-opacity: 0.08;
 }
 
+/* WebKit background clip text fixes */
+.bg-clip-text {
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.text-gradient-terracotta {
+  background: linear-gradient(135deg, #fbbf24 0%, #f97316 45%, #c85a32 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
 .terracotta-gradient {
   background: linear-gradient(135deg, #c85a32 0%, #7a2e1e 100%);
 }

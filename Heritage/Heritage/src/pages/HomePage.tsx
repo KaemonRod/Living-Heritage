@@ -69,7 +69,7 @@ export const HomePage: React.FC = () => {
           {/* Main Headline */}
           <div className="space-y-4 max-w-4xl mx-auto">
             <h1 className="font-serif font-black text-4xl sm:text-6xl lg:text-7xl tracking-tight text-white leading-none drop-shadow-2xl">
-              Living Heritage of <span className="text-transparent bg-clip-text terracotta-gradient">Goa</span>
+              Living Heritage of <span className="text-gradient-terracotta">Goa</span>
             </h1>
             <p className="text-stone-300 text-base sm:text-xl max-w-2xl mx-auto font-sans leading-relaxed">
               Explore 16th-century basilicas, coastal red laterite forts, 12th-century stone sanctuaries, living crafts, and oral storytellers.
